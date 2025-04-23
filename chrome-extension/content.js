@@ -1,0 +1,90 @@
+function getToken() {
+    return new Promise((resolve) => {
+        chrome.storage.local.get('authToken', (result) => {
+            resolve(result.authToken);
+        });
+    });
+}
+
+function insertCustomButton() {
+    // Identify Share button
+    const shareBtn = document.querySelector('button[aria-label="Share"]');
+    // Terminate early if Share button not found or if the custom button already exists
+    if (!shareBtn || document.getElementById('ci-button')) return;
+    // Clone the Share button to preserve styling
+    const customBtn = shareBtn.cloneNode(true);
+    customBtn.id = 'ci-button';
+    // Update accessibility attributes and tooltip
+    customBtn.setAttribute('aria-label', 'Add CI');
+    customBtn.setAttribute('title', 'Add CI');
+    // Remove the Share icon
+    const iconDiv = customBtn.querySelector('.yt-spec-button-shape-next__icon');
+    if (iconDiv) iconDiv.remove();
+    // Update button text
+    const textContainer = customBtn.querySelector('.yt-spec-button-shape-next__button-text-content');
+    if (textContainer) textContainer.textContent = 'Add CI';
+    // Send API request to Dreaming Spanish to add comprehensible input
+    customBtn.onclick = async (e) => {
+        e.preventDefault();
+        try {
+            const authToken = await getToken();
+            if (!authToken) {
+                throw new Error('No authentication token found. Please set it in the extension options.');
+            }
+            const titleElement = document.querySelector('ytd-watch-metadata h1 yt-formatted-string');
+            const videoTitle = titleElement?.textContent?.trim();
+            if (!titleElement || !videoTitle) {
+                throw new Error('A problem occurred finding the YouTube video title');
+            }
+            const video = document.querySelector('video');
+            const durationInSeconds = video?.duration;
+            if (!video || !durationInSeconds) {
+                throw new Error('A problem occurred finding the YouTube video');
+            }
+            const durationInMinutes = Math.round(durationInSeconds / 60);
+            const today = new Date().toISOString().split('T')[0];
+            if (!today) {
+                throw new Error('A problem occurred getting the current date');
+            }
+            const response = await fetch('https://www.dreamingspanish.com/.netlify/functions/externalTime', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                },
+                body: JSON.stringify(
+                    {
+                        'date': today,
+                        'description': videoTitle,
+                        'id': '',
+                        'timeSeconds': durationInMinutes,
+                        'type': 'watching'
+                    }
+                )
+            });
+            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+            const result = await response.json();
+            alert(`Success: ${result.message || 'CI added!'}`);
+        } catch (error) {
+            console.error(error);
+            alert(`Failure: ${error.message}`);
+        }
+    };
+    // Insert the custom button right after the Share button
+    customBtn.style.marginLeft = '8px';
+    shareBtn.parentElement.insertBefore(customBtn, shareBtn.nextSibling);
+}
+
+// Observe the DOM for changes to dynamically insert the button
+const observer = new MutationObserver(() => {
+    insertCustomButton();
+});
+
+// Start observing the document body changes
+observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+});
+
+// Initial call to insert the button
+insertCustomButton();  

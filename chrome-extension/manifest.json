@@ -1,0 +1,28 @@
+{
+    "name": "Spanis CI Tracker",
+    "version": "1.0",
+    "manifest_version": 3,
+    "description": "This chrome extension stores comprehensible input from YouTube to Dreaming Spanish with the click of a button.",
+    "permissions": [
+        "scripting",
+        "activeTab",
+        "storage"
+    ],
+    "host_permissions": [
+        "https://www.youtube.com/*"
+    ],
+    "action": {
+        "default_popup": "options.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.youtube.com/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "options_page": "options.html"
+}
