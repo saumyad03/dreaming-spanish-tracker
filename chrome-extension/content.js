@@ -8,7 +8,7 @@ function getToken() {
 
 function insertCustomButton() {
     // Identify Share button
-    const shareBtn = document.querySelector('button[aria-label="Share"]');
+    const shareBtn = [...document.querySelectorAll('button[aria-label="Share"]')].find(btn => btn.offsetParent !== null);;
     // Terminate early if Share button not found or if the custom button already exists
     if (!shareBtn || document.getElementById('ci-button')) return;
     // Clone the Share button to preserve styling
@@ -43,10 +43,7 @@ function insertCustomButton() {
             }
             const durationInMinutes = Math.round(durationInSeconds / 60);
             const today = new Date().toISOString().split('T')[0];
-            if (!today) {
-                throw new Error('A problem occurred getting the current date');
-            }
-            const response = await fetch('https://www.dreamingspanish.com/.netlify/functions/externalTime', {
+            const response = await fetch('http://localhost:3000/proxy', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,16 +72,4 @@ function insertCustomButton() {
     shareBtn.parentElement.insertBefore(customBtn, shareBtn.nextSibling);
 }
 
-// Observe the DOM for changes to dynamically insert the button
-const observer = new MutationObserver(() => {
-    insertCustomButton();
-});
-
-// Start observing the document body changes
-observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-});
-
-// Initial call to insert the button
-insertCustomButton();  
+insertCustomButton();
