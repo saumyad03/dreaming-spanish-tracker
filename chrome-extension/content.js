@@ -42,27 +42,28 @@ function insertCustomButton() {
                 throw new Error('A problem occurred finding the YouTube video');
             }
             const today = new Date().toISOString().split('T')[0];
-            const response = await fetch('http://localhost:3000/proxy', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`,
-                },
-                body: JSON.stringify(
-                    {
-                        'date': today,
-                        'description': videoTitle,
-                        'id': '',
-                        'timeSeconds': durationInSeconds,
-                        'type': 'watching'
-                    }
-                )
+            const method = 'POST';
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+            };
+            const body = JSON.stringify(
+                {
+                    'date': today,
+                    'description': videoTitle,
+                    'id': '',
+                    'timeSeconds': durationInSeconds,
+                    'type': 'watching'
+                }
+            );
+            chrome.runtime.sendMessage({ action: "sendRequest", method, headers, body }, (response) => {
+                if (response.success) {
+                    alert(`Success: 'CI added!'`);
+                } else {
+                    throw new Error(response.error);
+                }
             });
-            if (!response.ok) throw new Error(`API Error: ${response.status}`);
-            const result = await response.json();
-            alert(`Success: ${result.message || 'CI added!'}`);
         } catch (error) {
-            console.error(error);
             alert(`Failure: ${error.message}`);
         }
     };

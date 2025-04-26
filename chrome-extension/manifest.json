@@ -9,8 +9,11 @@
         "storage"
     ],
     "host_permissions": [
-        "https://www.youtube.com/*"
+        "https://www.dreamingspanish.com/*"
     ],
+    "background": {
+        "service_worker": "background.js"
+    },
     "action": {
         "default_popup": "options.html"
     },
