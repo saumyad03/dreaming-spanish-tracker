@@ -9,14 +9,16 @@ app.use(express.json());
 
 app.post('/proxy', async (req, res) => {
     const method = req.method;
-    const headers = req.headers;
+    const { authorization } = req.headers;
     const body = req.body;
-
     try {
         const response = await fetch('https://www.dreamingspanish.com/.netlify/functions/externalTime', {
             method,
-            headers,
-            body
+            headers: {
+                'Content-Type': 'application/json',
+                authorization
+            },
+            body: JSON.stringify(body)
         });
 
         const data = await response.json();

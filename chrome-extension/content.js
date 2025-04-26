@@ -41,7 +41,6 @@ function insertCustomButton() {
             if (!video || !durationInSeconds) {
                 throw new Error('A problem occurred finding the YouTube video');
             }
-            const durationInMinutes = Math.round(durationInSeconds / 60);
             const today = new Date().toISOString().split('T')[0];
             const response = await fetch('http://localhost:3000/proxy', {
                 method: 'POST',
@@ -54,7 +53,7 @@ function insertCustomButton() {
                         'date': today,
                         'description': videoTitle,
                         'id': '',
-                        'timeSeconds': durationInMinutes,
+                        'timeSeconds': durationInSeconds,
                         'type': 'watching'
                     }
                 )
@@ -72,4 +71,12 @@ function insertCustomButton() {
     shareBtn.parentElement.insertBefore(customBtn, shareBtn.nextSibling);
 }
 
-insertCustomButton();
+let currentUrl = location.href;
+setInterval(() => {
+    if (location.href !== currentUrl) {
+        currentUrl = location.href;
+        setTimeout(insertCustomButton, 1000);
+    }
+}, 10000)
+
+setTimeout(insertCustomButton, 5000);
