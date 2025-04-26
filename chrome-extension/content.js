@@ -58,7 +58,7 @@ function insertCustomButton() {
             );
             chrome.runtime.sendMessage({ action: "sendRequest", method, headers, body }, (response) => {
                 if (response.success) {
-                    alert(`Success: 'CI added!'`);
+                    alert(`Success: CI added!`);
                 } else {
                     throw new Error(response.error);
                 }
