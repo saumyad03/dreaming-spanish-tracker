@@ -41,7 +41,7 @@ function insertCustomButton() {
             if (!video || !durationInSeconds) {
                 throw new Error('A problem occurred finding the YouTube video');
             }
-            const today = new Date().toISOString().split('T')[0];
+            const today = new Date().toLocaleDateString('en-CA');
             const method = 'POST';
             const headers = {
                 'Content-Type': 'application/json',
