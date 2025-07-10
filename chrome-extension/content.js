@@ -51,7 +51,7 @@ function insertCustomButton() {
                 {
                     'date': today,
                     'description': videoTitle,
-                    'id': '',
+                    'embeddedId': '',
                     'timeSeconds': durationInSeconds,
                     'type': 'watching'
                 }
