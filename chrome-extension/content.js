@@ -108,8 +108,9 @@ overlay.style.right = '20px';
 overlay.style.width = '250px';
 overlay.style.maxHeight = '50vh';
 overlay.style.overflowY = 'auto';
-overlay.style.background = 'rgba(0, 0, 0, 0.8)';
-overlay.style.color = '#fff';
+// Make overlay and text very translucent
+overlay.style.background = 'rgba(0, 0, 0, 0.2)';
+overlay.style.color = 'rgba(255, 255, 255, 0.5)';
 overlay.style.padding = '10px';
 overlay.style.fontFamily = 'sans-serif';
 overlay.style.fontSize = '14px';
@@ -120,6 +121,7 @@ overlay.innerHTML = '<strong>Clicked Words</strong><ul id="yt-word-list" style="
 document.body.appendChild(overlay);
 const clearBtn = document.createElement('button');
 clearBtn.textContent = 'Clear';
+clearBtn.style.opacity = '0.4';
 clearBtn.style.marginTop = '10px';
 clearBtn.style.background = '#4169e1';
 clearBtn.style.color = '#fff';
